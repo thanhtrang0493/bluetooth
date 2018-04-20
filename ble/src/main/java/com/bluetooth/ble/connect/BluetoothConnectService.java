@@ -5,7 +5,11 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Build;
+
+import com.bluetooth.ble.broadcast.BluetoothListener;
+import com.bluetooth.ble.broadcast.ReceiverBluetoothState;
 
 public class BluetoothConnectService {
     private static final BluetoothConnectService ourInstance = new BluetoothConnectService();
@@ -19,6 +23,24 @@ public class BluetoothConnectService {
 
     private BluetoothConnectService() {
         bluetoothConnectCallback = new BluetoothConnectCallback();
+    }
+
+    public ReceiverBluetoothState registerReceiver(Context context, BluetoothListener bluetoothListener) {
+        ReceiverBluetoothState receiverBluetoothState = new ReceiverBluetoothState();
+        receiverBluetoothState.setBluetoothListener(bluetoothListener);
+
+        IntentFilter filter = new IntentFilter();
+
+        //state turn bluetooth
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+
+        context.registerReceiver(receiverBluetoothState, filter);
+
+        return receiverBluetoothState;
+    }
+
+    public void unregisterReceiver(Context context, ReceiverBluetoothState receiverBluetoothState) {
+        context.unregisterReceiver(receiverBluetoothState);
     }
 
     public boolean connectDevice(Context context, BluetoothDevice bluetoothDevice, BluetoothConnectListener listener) {
