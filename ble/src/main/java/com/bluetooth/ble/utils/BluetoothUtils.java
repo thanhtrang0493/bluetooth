@@ -12,6 +12,7 @@ public class BluetoothUtils {
     public final static String WRITE_CHARACTERISTIC_UUID = "0000fff1-0000-1000-8000-00805f9b34fb";
     public final static String NOTIFY_CHARACTERISTIC_UUID = "0000fff2-0000-1000-8000-00805f9b34fb";
     public final static String NOTIFY_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb";
+    public final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     private static String byteToHex(byte b) {
         char char1 = Character.forDigit((b & 0xF0) >> 4, 16);
@@ -68,5 +69,15 @@ public class BluetoothUtils {
             reversed[i] = value[length - (i + 1)];
         }
         return reversed;
+    }
+
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }
