@@ -5,13 +5,13 @@ import android.bluetooth.BluetoothGattCharacteristic;
 public interface BluetoothConnectListener {
     void onConnectDeviceSuccess(BluetoothGattCharacteristic characteristic);
 
-    void onConnectDeviceFail();
+    void onConnectDeviceFail(int status, int newState);
 
-    void onWriteCommandSuccess();
+    void onWriteCommandSuccess(BluetoothGattCharacteristic characteristic);
 
-    void onWriteCommandFail();
+    void onWriteCommandFail(int status);
 
     void onReadCommandSuccess(byte[] data);
 
-    void onReadCommandFail();
+    void onReadCommandFail(int status);
 }

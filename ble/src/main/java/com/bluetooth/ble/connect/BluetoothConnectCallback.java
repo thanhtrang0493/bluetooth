@@ -34,22 +34,22 @@ public class BluetoothConnectCallback extends BluetoothGattCallback {
         if (newState == BluetoothProfile.STATE_CONNECTED) {
             gatt.discoverServices();
         } else {
-            connectFail();
+            connectFail(status, newState);
         }
     }
 
-    private void connectFail(){
+    private void connectFail(final int status, final int newState) {
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (listener != null) {
-                    listener.onConnectDeviceFail();
+                    listener.onConnectDeviceFail(status, newState);
                 }
             }
         });
     }
 
-    private void connectSuccess(final BluetoothGattCharacteristic characteristic){
+    private void connectSuccess(final BluetoothGattCharacteristic characteristic) {
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -64,7 +64,7 @@ public class BluetoothConnectCallback extends BluetoothGattCallback {
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
         super.onServicesDiscovered(gatt, status);
         if (status != BluetoothGatt.GATT_SUCCESS) {
-            connectFail();
+            connectFail(status, -1);
             return;
         }
 
@@ -101,29 +101,29 @@ public class BluetoothConnectCallback extends BluetoothGattCallback {
     public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
         super.onCharacteristicWrite(gatt, characteristic, status);
         if (status == BluetoothGatt.GATT_SUCCESS) {
-            writeSuccess();
+            writeSuccess(characteristic);
         } else {
-            writeFail();
+            writeFail(status);
         }
     }
 
-    private void writeSuccess(){
+    private void writeSuccess(final BluetoothGattCharacteristic characteristic) {
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (listener != null) {
-                    listener.onWriteCommandSuccess();
+                    listener.onWriteCommandSuccess(characteristic);
                 }
             }
         });
     }
 
-    private void writeFail(){
+    private void writeFail(final int status) {
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (listener != null) {
-                    listener.onWriteCommandFail();
+                    listener.onWriteCommandFail(status);
                 }
             }
         });
@@ -137,11 +137,11 @@ public class BluetoothConnectCallback extends BluetoothGattCallback {
         if (status == BluetoothGatt.GATT_SUCCESS) {
             readSuccess(characteristic.getValue());
         } else {
-            readFail();
+            readFail(status);
         }
     }
 
-    private void readSuccess(final byte[] data){
+    private void readSuccess(final byte[] data) {
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -152,12 +152,12 @@ public class BluetoothConnectCallback extends BluetoothGattCallback {
         });
     }
 
-    private void readFail(){
+    private void readFail(final int status) {
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (listener != null) {
-                    listener.onReadCommandFail();
+                    listener.onReadCommandFail(status);
                 }
             }
         });

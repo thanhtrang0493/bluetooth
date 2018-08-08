@@ -13,32 +13,34 @@ import com.bluetooth.ble.connect.RequestBLEEnable;
 import com.bluetooth.ble.discover.DiscoverBLE;
 import com.bluetooth.ble.discover.DiscoverListener;
 
-public class BluetoothConfig {
-    private static final BluetoothConfig ourInstance = new BluetoothConfig();
+public class BLE {
 
-    public static BluetoothConfig getInstance() {
-        return ourInstance;
+    private Context context;
+
+    public BLE(Context context) {
+        this.context = context;
     }
 
-    private BluetoothConfig() {
-
-    }
-
-    public ReceiverBluetoothState registerReceiver(Context context, BluetoothListener bluetoothListener) {
+    /**
+     * This function called onResume, add filter and listener result
+     * @param bluetoothListener
+     * @return
+     */
+    public ReceiverBluetoothState registerReceiver(BluetoothListener bluetoothListener) {
         return BluetoothConnectService.getInstance().registerReceiver(context, bluetoothListener);
     }
 
-    public void unregisterReceiver(Context context, ReceiverBluetoothState receiverBluetoothState) {
+    public void unregisterReceiver(ReceiverBluetoothState receiverBluetoothState) {
         BluetoothConnectService.getInstance().unregisterReceiver(context, receiverBluetoothState);
     }
 
-    public boolean checkEnableBluetooth(Context context) {
+    public boolean checkEnableBluetooth() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         return RequestBLEEnable.getInstance().hasPermissions(context, bluetoothAdapter);
     }
 
-    public void startDiscover(Context context, DiscoverListener discoverListener, long TIME_OUT_DISCOVER) {
-        if (checkEnableBluetooth(context)) {
+    public void startDiscover(DiscoverListener discoverListener, long TIME_OUT_DISCOVER) {
+        if (checkEnableBluetooth()) {
             DiscoverBLE.getInstance().setTimeOut(TIME_OUT_DISCOVER);
             DiscoverBLE.getInstance().setDiscoverListener(discoverListener);
             DiscoverBLE.getInstance().startScan();
@@ -49,7 +51,7 @@ public class BluetoothConfig {
         DiscoverBLE.getInstance().stopScan();
     }
 
-    public void connectDevice(Context context, BluetoothDevice bluetoothDevice, BluetoothConnectListener bluetoothConnectListener) {
+    public void connectDevice(BluetoothDevice bluetoothDevice, BluetoothConnectListener bluetoothConnectListener) {
         BluetoothConnectService.getInstance().connectDevice(context, bluetoothDevice, bluetoothConnectListener);
     }
 
